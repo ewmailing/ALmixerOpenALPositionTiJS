@@ -19,16 +19,32 @@
     <property name="ti.ui.defaultunit" type="string">system</property>
     <iphone>
         <orientations device="iphone">
-            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
         </orientations>
         <orientations device="ipad">
-            <orientation>Ti.UI.PORTRAIT</orientation>
-            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
             <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
             <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
         </orientations>
     </iphone>
-    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <android xmlns:android="http://schemas.android.com/apk/res/android">
+        <tool-api-level>19</tool-api-level>
+        <manifest>
+            <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19"/>
+	<application>
+	    <activity
+	    android:name="org.appcelerator.titanium.TiActivity"
+	    android:configChanges="keyboardHidden"
+	       android:screenOrientation="landscape"
+	    />
+	    <activity android:name="ti.modules.titanium.ui.TiTabActivity"
+	      android:configChanges="keyboardHidden"
+	    />
+	</application>
+  </manifest>
+  
+        </manifest>
+    </android>
     <mobileweb>
         <precache/>
         <splash>
