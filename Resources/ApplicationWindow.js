@@ -1,11 +1,22 @@
 var platino = require('co.lanica.platino');
 
+var IsLandscape = function (orient) {
+  orient = orient || Ti.UI.orientation;
+  return orient == Ti.UI.LANDSCAPE_LEFT || orient == Ti.UI.LANDSCAPE_RIGHT;
+};
+ 
+var IsPortrait = function (orient) {
+  orient = orient || Ti.UI.orientation;
+  return orient == Ti.UI.PORTRAIT || orient == Ti.UI.UPSIDE_PORTRAIT;
+};
+
 (function() {
 	var ApplicationWindow = function() {
 		var window = Ti.UI.createWindow({
 			backgroundColor: 'black',
 //			orientationModes: [Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT], //others: Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT, Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT
 			orientationModes: [Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT], //others: Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT, Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT
+//			orientationModes: [Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT, Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT], //others: Ti.UI.PORTRAIT, Ti.UI.UPSIDE_PORTRAIT, Ti.UI.LANDSCAPE_LEFT, Ti.UI.LANDSCAPE_RIGHT
 			fullscreen: true,
 			navBarHidden: true
 		});
@@ -27,6 +38,14 @@ var platino = require('co.lanica.platino');
 
 		// Set your target screen resolution (in points) below
 		// Set your target screen resolution (in points) below
+
+		game.touchScaleX = 1;
+		game.touchScaleY = 1;
+
+		// Updates screen scale
+		var updateScreenSize = function() {
+		    if(IsLandscape())
+		    {
 		var screenHeight = Ti.Platform.displayCaps.platformHeight;
 		if (screenHeight >= 568) {
 			screenHeight = 568;
@@ -34,22 +53,38 @@ var platino = require('co.lanica.platino');
 			screenHeight = 480;
 		}
 		
+		
+		
+		game.TARGET_SCREEN = {
+			width: screenHeight,
+			height: 320
+		}
+
+		    }
+		    else
+		    {
+		    		var screenHeight = Ti.Platform.displayCaps.platformHeight;
+		if (screenHeight >= 568) {
+			screenHeight = 568;
+		} else {
+			screenHeight = 480;
+		}
+		
+		
+		
 		game.TARGET_SCREEN = {
 			width: 320,
 			height: screenHeight
 		}
 
-		game.touchScaleX = 1;
-		game.touchScaleY = 1;
-
-		// Updates screen scale
-		var updateScreenSize = function() {
-			var screenScale = game.size.height / game.TARGET_SCREEN.height;
-			game.screen = {
-				width: game.size.width / screenScale,
-				height: game.size.height / screenScale
-			};
-
+		    }
+		    
+	    		var screenScale = game.size.height / game.TARGET_SCREEN.height;
+		    	game.screen = {
+			    	width: game.size.width / screenScale,
+			    	height: game.size.height / screenScale
+			    };
+			    
 			game.touchScaleX = game.screen.width  / game.size.width;
 			game.touchScaleY = game.screen.height / game.size.height;
 			game.screenScale = game.screen.height / game.TARGET_SCREEN.height;
