@@ -235,7 +235,7 @@ var current_particle_index = 0;
 			{
 				listenerTrailParticles[current_particle_index].angle = 180.0;
 				scene.add(listenerTrailParticles[current_particle_index]);
-				sourceTrailParticles[current_particle_index].hide();
+				listenerTrailParticles[current_particle_index].hide();
 //				sourceTrailParticles[current_particle_index].alpha = 0;
 			}
 
