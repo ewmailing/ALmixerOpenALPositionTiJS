@@ -1,8 +1,11 @@
+var platino = require('co.lanica.platino');
+var ALmixer = platino.require('co.lanica.almixer');
+
 var TOUCH_SCALE = 1;
 
 
 (function() {
-	var platino = require('co.lanica.platino');
+
 
 	var MainScene = function(window, game) {
 		var scene = platino.createScene();
@@ -17,8 +20,13 @@ var TOUCH_SCALE = 1;
 		var listenerTrailParticles = [];
 		var currentListenerTrailParticle = null;
 
+		var soundEffectHandle = ALmixer.LoadAll("sound_bubbles.wav");
+		var alSourceID = 0;
 
 
+		ALmixer.alDistanceModel(ALmixer.AL_LINEAR_DISTANCE_CLAMPED);
+		ALmixer.alDopplerFactor(1.0);
+		ALmixer.alSpeedOfSound(343.3);
 
 		var onSpriteTouch = function(e)
 		{
@@ -47,6 +55,8 @@ var TOUCH_SCALE = 1;
 				currentListenerTrailParticle.x = audioListener.center.x;
 				currentListenerTrailParticle.y = audioListener.center.y;
 			}
+			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, audioListener.center.y, 0);
+				
 		};
 		
 		var onAudioListenerTouchEnd = function(e)
@@ -61,6 +71,7 @@ var TOUCH_SCALE = 1;
 				currentListenerTrailParticle.x = audioListener.center.x;
 				currentListenerTrailParticle.y = audioListener.center.y;
 			}
+			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, audioListener.center.y, 0);
 
 		};
 		
@@ -91,6 +102,8 @@ var TOUCH_SCALE = 1;
 				currentSourceTrailParticle.x = audioSource.center.x;
 				currentSourceTrailParticle.y = audioSource.center.y;
 			}
+			ALmixer.alSource3f(alSourceID, ALmixer.AL_POSITION, audioSource.center.x, audioSource.center.y, 0);
+			
 		};
 
 		var onAudioSourceTouchEnd = function(e)
@@ -105,6 +118,7 @@ var TOUCH_SCALE = 1;
 				currentSourceTrailParticle.x = audioSource.center.x;
 				currentSourceTrailParticle.y = audioSource.center.y;
 			}
+			ALmixer.alSource3f(alSourceID, ALmixer.AL_POSITION, audioSource.center.x, audioSource.center.y, 0);			
 		};
 
 		var onScreenTouchStart = function(e)
@@ -260,6 +274,8 @@ var current_particle_index = 0;
 			game.addEventListener('touchstart', onScreenTouchStart);
 			game.addEventListener('touchmove', onScreenTouchMove);
 			game.addEventListener('touchend', onScreenTouchEnd);
+
+			alSourceID = ALmixer.PlaySource(soundEffectHandle, -1);
 		};
 
 		var onSceneDeactivated = function(e)
@@ -381,6 +397,13 @@ var current_particle_index = 0;
 					//    which_particle.show();
 				}
 			}
+
+			// slider ranges are 0 to 1. We want to scale up the values so we can actually hear a difference 
+			// since OpenAL speed of sound is 343.3 m/s.
+			var source_velocity = e.value * 100;
+			ALmixer.alSource3f(alSourceID, ALmixer.AL_VELOCITY, source_velocity, 0, 0);
+
+
 		});
 		window.add(source_velocity_slider);
 
@@ -459,6 +482,13 @@ var current_particle_index = 0;
 					//    which_particle.show();
 				}
 			}
+
+			// slider ranges are 0 to 1. We want to scale up the values so we can actually hear a difference 
+			// since OpenAL speed of sound is 343.3 m/s.
+			// Make negative because the listener flys to the left (negative direction)
+			var listener_velocity = e.value * -100;
+			ALmixer.alListener3f(ALmixer.AL_VELOCITY, listener_velocity, 0, 0);
+
 		});
 		window.add(listener_velocity_slider);
 
