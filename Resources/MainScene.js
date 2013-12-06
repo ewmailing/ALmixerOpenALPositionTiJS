@@ -187,10 +187,13 @@ var TOUCH_SCALE = 1;
 var current_particle_index = 0;
 			Ti.API.info("MainScene has been activated.");
 			
-			audioSource = platino.createSprite(
+			// use createSprite for debugging because it creates a simple square
+//			audioSource = platino.createSprite(
+			audioSource = platino.createParticles(
             {
-				width:48,
-				height:48,
+				image:'BubbleSource.lap',
+//				width:48,
+//				height:48,
 				x:100,
 				y:100
 			});
@@ -212,9 +215,10 @@ var current_particle_index = 0;
 			listenerTrailParticles[4] = platino.createParticles({image:'SourceTrail_500.lap'});
 			currentListenerTrailParticle = null; // don't show anything at 0 velocity
 
-
+			// http://openclipart.org/detail/2219/head-set-by-machovka
 			audioListener = platino.createSprite(
             {
+				image:'Machovka_head_set.png',
 				width:64,
 				height:64,
 				x:100,
