@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <id>co.lanica.platino.blankproject</id>
-    <name>Blank-Project</name>
+    <id>co.lanica.platino.openalpositional</id>
+    <name>OpenAL-Positional</name>
     <version>1.0</version>
     <publisher>Lanica, Inc.</publisher>
     <url>http://lanica.co</url>
-    <description>Blank Platino Project.</description>
+    <description>OpenAL Positional</description>
     <copyright>2013 by Lanica, Inc.</copyright>
-    <icon>Icon.png</icon>
+    <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>
@@ -28,22 +28,21 @@
         </orientations>
     </iphone>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
-        <tool-api-level>19</tool-api-level>
-        <manifest>
-            <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19"/>
-	<application>
-	    <activity
-	    android:name="org.appcelerator.titanium.TiActivity"
-	    android:configChanges="keyboardHidden"
-	       android:screenOrientation="landscape"
-	    />
-	    <activity android:name="ti.modules.titanium.ui.TiTabActivity"
-	      android:configChanges="keyboardHidden"
-	    />
-	</application>
-  </manifest>
-  
-    </android>
+		<tool-api-level>19</tool-api-level>
+		<manifest>
+			<uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19"/>
+			<application>
+				<activity
+					android:name="org.appcelerator.titanium.TiActivity"
+					android:configChanges="keyboardHidden"
+					android:screenOrientation="landscape"
+				/>
+			<activity android:name="ti.modules.titanium.ui.TiTabActivity"
+				android:configChanges="keyboardHidden"
+			/>
+			</application>
+		</manifest>
+	</android>
     <mobileweb>
         <precache/>
         <splash>
