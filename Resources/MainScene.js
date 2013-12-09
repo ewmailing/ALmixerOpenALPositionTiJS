@@ -225,11 +225,11 @@ function ShowParticle(particle_effect, x, y)
 			sourceTrailParticles[4] = platino.createParticles({image:'SourceTrail_500.lap'});
 			currentSourceTrailParticle = null; // don't show anything at 0 velocity
 
-			listenerTrailParticles[0] = platino.createParticles({image:'SourceTrail_100.lap'});
-			listenerTrailParticles[1] = platino.createParticles({image:'SourceTrail_200.lap'});
-			listenerTrailParticles[2] = platino.createParticles({image:'SourceTrail_300.lap'});
-			listenerTrailParticles[3] = platino.createParticles({image:'SourceTrail_400.lap'});
-			listenerTrailParticles[4] = platino.createParticles({image:'SourceTrail_500.lap'});
+			listenerTrailParticles[0] = platino.createParticles({image:'ListenerTrail_100.lap'});
+			listenerTrailParticles[1] = platino.createParticles({image:'ListenerTrail_200.lap'});
+			listenerTrailParticles[2] = platino.createParticles({image:'ListenerTrail_300.lap'});
+			listenerTrailParticles[3] = platino.createParticles({image:'ListenerTrail_400.lap'});
+			listenerTrailParticles[4] = platino.createParticles({image:'ListenerTrail_500.lap'});
 			currentListenerTrailParticle = null; // don't show anything at 0 velocity
 
 
@@ -253,7 +253,6 @@ function ShowParticle(particle_effect, x, y)
 			}
 			for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 			{
-				listenerTrailParticles[current_particle_index].angle = 180.0;
 				scene.add(listenerTrailParticles[current_particle_index]);
 				HideParticle(listenerTrailParticles[current_particle_index]);
 			}
@@ -403,7 +402,7 @@ function ShowParticle(particle_effect, x, y)
 			value:0.0,
 			width:'80%',
 			height:'auto',
-			top:280,
+			bottom:0,
 			text:"Listener Velocity"
 			//   leftTrackImage:'../images/slider_orangebar.png',
 			//   rightTrackImage:'../images/slider_lightbar.png',
