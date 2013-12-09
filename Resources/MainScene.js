@@ -41,12 +41,26 @@ function ShowParticle(particle_effect, x, y)
 		var currentListenerTrailParticle = null;
 
 		var soundEffectHandle = ALmixer.LoadAll("sound_bubbles.wav");
-		var alSourceID = 0;
+		// Since this app uses OpenAL effects which need OpenAL source ids, let's grab a free channel and hold on/reuse its source.
+		// Since we have nothing else playing, we know all channels are free. So let's use channel 0.
+		// If we did not know this, we could use ALmixer.FindFreeChannel() first to get a free channel.
+		// If we had more sounds, playing, we might also want to use ALmixer.ReserveChannels() to prevent auto-assignment from trying to use our channel.
+		var alSourceID = ALmixer.GetSource(0);
 
-
+		// I like linear distance models for 2D games.
+		// Options are AL_NONE, AL_INVERSE_DISTANCE, AL_INVERSE_DISTANCE_CLAMPED
+		// AL_LINEAR_DISTANCE, AL_LINEAR_DISTANCE_CLAMPED
+		// AL_EXPONENT_DISTANCE, AL_EXPONENT_DISTANCE_CLAMPED 
 		ALmixer.alDistanceModel(ALmixer.AL_LINEAR_DISTANCE_CLAMPED);
+		// Turn on Doppler effects
 		ALmixer.alDopplerFactor(1.0);
+		// Default speed of sound in OpenAL is 343.3 (which is speed of sound in air)
 		ALmixer.alSpeedOfSound(343.3);
+
+		// We want to set the scale/range of how sound will get quieter as things get farther apart.
+		// In ApplicationWindow.js, we implied we were working in a game virtual space of 1024x768.
+		// So let's set the max drop off distance at 700.
+		ALmixer.alSourcef(alSourceID, ALmixer.AL_MAX_DISTANCE, 700);
 
 		var onSpriteTouch = function(e)
 		{
@@ -266,7 +280,7 @@ function ShowParticle(particle_effect, x, y)
 			game.addEventListener('touchmove', onScreenTouchMove);
 			game.addEventListener('touchend', onScreenTouchEnd);
 
-			alSourceID = ALmixer.PlaySource(soundEffectHandle, -1);
+			ALmixer.PlaySource(alSourceID, soundEffectHandle, -1);
 		};
 
 		var onSceneDeactivated = function(e)
