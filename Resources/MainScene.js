@@ -1,4 +1,7 @@
-var TOUCH_SCALE = 1;
+
+
+
+
 
 // I made this a helper function because it wasn't obvious what the best way to hide a particle was.
 // scene.remove() on the particle works, but the instantaneous disappearance of the existing particles was unpleasant to look at.
@@ -26,8 +29,7 @@ function ShowParticle(particle_effect, x, y)
 
 	var MainScene = function(window, game) {
 		var scene = platino.createScene();
-		    game.registerForMultiTouch();
-		    
+
 		var touchableObjectsArray = [];
 		var currentlyTouchedObjectsList = {};
 		var audioSource = null;
@@ -40,7 +42,6 @@ function ShowParticle(particle_effect, x, y)
 
 
 
-
 		var onSpriteTouch = function(e)
 		{
 			Ti.API.info(e.source.name + ' fired a touch event with type: ' + e.type);
@@ -48,21 +49,14 @@ function ShowParticle(particle_effect, x, y)
 
 		var onAudioListenerTouchStart = function(e)
 		{
-//			Ti.API.info(e.source.name + ' fired a touch event with type: ' + e.type);
-			 //   Ti.API.info(e.type + ": " + JSON.stringify(e.points));
-
-			audioListener.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
+			audioListener.center = {x:e.x, y:e.y};
 			audioListener.color(1.0, 0, 1.0);
-
 		};
 		
 		var onAudioListenerTouchMove = function(e)
 		{
-//			Ti.API.info(e.source.name + ' fired a touch event with type: ' + e.type);
-//			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
-
-			audioListener.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-			audioListener.color(1.0, 1.0, 1.0);
+			audioListener.center = {x:e.x, y:e.y};
+			audioListener.color(1.0, 0.0, 0.0);
 			if(currentListenerTrailParticle !== null)
 			{
 				currentListenerTrailParticle.x = audioListener.center.x;
@@ -72,11 +66,8 @@ function ShowParticle(particle_effect, x, y)
 		
 		var onAudioListenerTouchEnd = function(e)
 		{
-//			Ti.API.info(e.source.name + ' fired a touch event with type: ' + e.type);
-//			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
-
-			audioListener.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-			audioListener.color(1.0, 0.0, 0.0);
+			audioListener.center = {x:e.x, y:e.y};
+			audioListener.color(1.0, 1.0, 1.0);
 			if(currentListenerTrailParticle !== null)
 			{
 				currentListenerTrailParticle.x = audioListener.center.x;
@@ -88,13 +79,9 @@ function ShowParticle(particle_effect, x, y)
 
 		var onAudioSourceTouchStart = function(e)
 		{
-//			Ti.API.info(e.source.name + ' fired a touch event with type: ' + e.type);
-			 //   Ti.API.info(e.type + ": " + JSON.stringify(e.points));
-
-			audioSource.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-//						audioSource.color(1.0, 0, 1.0);
+			audioSource.center = {x:e.x, y:e.y};
+//			audioListener.color(1.0, 0, 1.0);
 			audioSourceParticles.center = audioSource.center;
-
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -104,13 +91,9 @@ function ShowParticle(particle_effect, x, y)
 
 		var onAudioSourceTouchMove = function(e)
 		{
-			//			Ti.API.info(e.source.name + ' fired a touch event with type: ' + e.type);
-			//			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
-
-			audioSource.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
+			audioSource.center = {x:e.x, y:e.y};
+//			audioListener.color(1.0, 1.0, 1.0);
 			audioSourceParticles.center = audioSource.center;
-//						audioSource.color(0.0, 0.0, 1.0);
-
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -120,13 +103,9 @@ function ShowParticle(particle_effect, x, y)
 
 		var onAudioSourceTouchEnd = function(e)
 		{
-			//			Ti.API.info(e.source.name + ' fired a touch event with type: ' + e.type);
-			//			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
-
-			audioSource.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
+			audioSource.center = {x:e.x, y:e.y};
+//			audioListener.color(1.0, 0.0, 0.0);
 			audioSourceParticles.center = audioSource.center;
-
-//						audioSource.color(1.0, 1.0, 1.0);
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -134,8 +113,9 @@ function ShowParticle(particle_effect, x, y)
 			}
 		};
 
-		var onScreenTouchStart = function(e)
+		var onScreenTouchStart = function(event)
 		{
+            var e = game.locationInView(event);
 			var i;
 			var event_data;
 			var current_touched_object;
@@ -150,24 +130,18 @@ function ShowParticle(particle_effect, x, y)
 						y: e.y
 					};
 					current_touched_object = touchableObjectsArray[i];
-					Ti.API.debug("onScreenTouchStart object " + current_touched_object);
-					Ti.API.debug("onScreenTouchStart object.name " + current_touched_object.name);
-					Ti.API.debug("onScreenTouchStart e.type " + e.type);
+//					Ti.API.debug("onScreenTouchStart object " + current_touched_object);
+//					Ti.API.debug("onScreenTouchStart object.name " + current_touched_object.name);
+//					Ti.API.debug("onScreenTouchStart e.type " + e.type);
 					currentlyTouchedObjectsList[current_touched_object] = current_touched_object;
-//					touchableObjectsArray[i].fireEvent('touchstart', event_data);
-//					touchableObjectsArray[i].fireEvent('touchmove', event_data);
-//					touchableObjectsArray[i].fireEvent('touchend', event_data);
 					current_touched_object.fireEvent(e.type, event_data);
 				}
 			}
 		};
 		
-		var onScreenTouchMove = function(e)
+		var onScreenTouchMove = function(event)
 		{
-		    			Ti.API.debug("onScreenTouchMove");
-						Ti.API.debug("onScreenTouchMove e.type " + e.type);
-
-
+            var e = game.locationInView(event);
 			var key;
 			var touched_object;
 			var event_data;
@@ -178,19 +152,14 @@ function ShowParticle(particle_effect, x, y)
 			};
 			for(key in currentlyTouchedObjectsList)
 			{
-			    touched_object = currentlyTouchedObjectsList[key];
-			    		    			Ti.API.debug("onScreenTouchMove object " + touched_object);
-			    		    			Ti.API.debug("onScreenTouchMove object.name " + touched_object.name);
-			    		    			Ti.API.debug("onScreenTouchMove object.name " + currentlyTouchedObjectsList[touched_object].name);
-
+                touched_object = currentlyTouchedObjectsList[key];
 				touched_object.fireEvent(e.type, event_data);
-//								touched_object.fireEvent('touchstart', event_data);
-
 			}
 		};
 		
-		var onScreenTouchEnd = function(e)
+		var onScreenTouchEnd = function(event)
 		{
+            var e = game.locationInView(event);
 			var key;
 			var touched_object;
 			var event_data;
@@ -201,7 +170,7 @@ function ShowParticle(particle_effect, x, y)
 			};
 			for(key in currentlyTouchedObjectsList)
 			{
-			    touched_object = currentlyTouchedObjectsList[key];
+                touched_object = currentlyTouchedObjectsList[key];
 				touched_object.fireEvent(e.type, event_data);
 				delete currentlyTouchedObjectsList[key];
 			}
@@ -224,6 +193,7 @@ function ShowParticle(particle_effect, x, y)
 				x:100,
 				y:100
 			});
+            game.setupSpriteSize(audioSource);
 			audioSource.color(0, 0, 0, 0); // make invisible
 			audioSource.name = 'audioSource';
 			// audioSource.z = -10;
@@ -247,11 +217,11 @@ function ShowParticle(particle_effect, x, y)
 			sourceTrailParticles[4] = platino.createParticles({image:'SourceTrail_500.lap'});
 			currentSourceTrailParticle = null; // don't show anything at 0 velocity
 
-			listenerTrailParticles[0] = platino.createParticles({image:'SourceTrail_100.lap'});
-			listenerTrailParticles[1] = platino.createParticles({image:'SourceTrail_200.lap'});
-			listenerTrailParticles[2] = platino.createParticles({image:'SourceTrail_300.lap'});
-			listenerTrailParticles[3] = platino.createParticles({image:'SourceTrail_400.lap'});
-			listenerTrailParticles[4] = platino.createParticles({image:'SourceTrail_500.lap'});
+			listenerTrailParticles[0] = platino.createParticles({image:'ListenerTrail_100.lap'});
+			listenerTrailParticles[1] = platino.createParticles({image:'ListenerTrail_200.lap'});
+			listenerTrailParticles[2] = platino.createParticles({image:'ListenerTrail_300.lap'});
+			listenerTrailParticles[3] = platino.createParticles({image:'ListenerTrail_400.lap'});
+			listenerTrailParticles[4] = platino.createParticles({image:'ListenerTrail_500.lap'});
 			currentListenerTrailParticle = null; // don't show anything at 0 velocity
 
 			// http://openclipart.org/detail/2219/head-set-by-machovka
@@ -263,7 +233,9 @@ function ShowParticle(particle_effect, x, y)
 				x:100,
 				y:200
 			});
-			audioListener.color(1.0, 0, 0);
+            game.setupSpriteSize(audioListener);
+
+			audioListener.color(1.0, 1.0, 1.0);
 			audioListener.name = 'audioListener';
 
 			// Initialize all the particles by adding them to the scene, but then hiding them.
@@ -274,7 +246,6 @@ function ShowParticle(particle_effect, x, y)
 			}
 			for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 			{
-				listenerTrailParticles[current_particle_index].angle = 180.0;
 				scene.add(listenerTrailParticles[current_particle_index]);
 				HideParticle(listenerTrailParticles[current_particle_index]);
 			}
@@ -390,8 +361,8 @@ function ShowParticle(particle_effect, x, y)
 
 			if(which_particle !== currentSourceTrailParticle)
 			{
-	    		// Loop through all our particles and hide all of them except for the one that needs to be shown.
-		    	// Also update the position of the shown particle.
+                // Loop through all our particles and hide all of them except for the one that needs to be shown.
+                // Also update the position of the shown particle.
 				for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 				{
 					if(which_particle === sourceTrailParticles[current_particle_index])
@@ -404,7 +375,7 @@ function ShowParticle(particle_effect, x, y)
 					}
 				}
 
-			    // Save the selected particle as the one we are now showing.
+                // Save the selected particle as the one we are now showing.
 				currentSourceTrailParticle = which_particle;
 			}
 		});
@@ -416,7 +387,7 @@ function ShowParticle(particle_effect, x, y)
 			value:0.0,
 			width:'80%',
 			height:'auto',
-			top:280,
+			bottom:0,
 			text:"Listener Velocity"
 			//   leftTrackImage:'../images/slider_orangebar.png',
 			//   rightTrackImage:'../images/slider_lightbar.png',
@@ -460,8 +431,8 @@ function ShowParticle(particle_effect, x, y)
 
 			if(which_particle !== currentListenerTrailParticle)
 			{
-	    		// Loop through all our particles and hide all of them except for the one that needs to be shown.
-		    	// Also update the position of the shown particle.
+                // Loop through all our particles and hide all of them except for the one that needs to be shown.
+                // Also update the position of the shown particle.
 				for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 				{
 					if(which_particle === listenerTrailParticles[current_particle_index])
@@ -475,7 +446,7 @@ function ShowParticle(particle_effect, x, y)
 					}
 				}
 				
-			    // Save the selected particle as the one we are now showing.
+                // Save the selected particle as the one we are now showing.
 				currentListenerTrailParticle = which_particle;
 			}
 		});
