@@ -74,13 +74,11 @@ function CreateApplicationWindow()
 	}
 */
 
-	var margin_width = 0;
-
 	// Sets up screen margins (useful for dynamic layouts, or if you want to implement letterboxing on some devices)
 	// For a letter-boxed effect, add black bars to the HUD in the margin regions
 	var UpdateMargins = function()
 	{
-		margin_width = Math.ceil((gameView.screen.width - gameView.TARGET_SCREEN.width) * 0.5);
+		var margin_width = Math.ceil((gameView.screen.width - gameView.TARGET_SCREEN.width) * 0.5);
 		
 		// defines where screen-within-margin begins (add x and y values when positioning sprites)
 		gameView.STAGE_START = 
@@ -189,25 +187,44 @@ function CreateApplicationWindow()
         e.y = y;
         return e;
 	};
+	
+	/*
 
 	// Handle android back button on a per-scene basis by adding defining a scene.backButtonHandler()
 	// function within your scenes (or delete contents of below function to handle back button globally)
 	the_window.addEventListener('androidback', function(e)
 	{
-        /*
-		if ((gameView.currentScene) && (gameView.currentScene.backButtonHandler))
-		{
-			gameView.currentScene.backButtonHandler();
-		}
-		*/
+        
+		//if ((gameView.currentScene) && (gameView.currentScene.backButtonHandler))
+	//	{
+	//		gameView.currentScene.backButtonHandler();
+	//	}
 		the_window.close();
+		ALmixer.Quit();
 	});
 
 	// Free up game resources when the_window is closed
 	the_window.addEventListener('close', function(e) {
-		game = null;
+		gameView = null;
 	});
+*/
+	// The Titanium.Android.currentActivity.addEventListener pause, resume don't work.
+	// As a fallback, we'll use the window focus to pause/resume audio when the application is backgrounded.
+	the_window.addEventListener('blur', 
+		function(e) 
+		{
+			Ti.API.info("in the_window blur");
+ 			ALmixer.BeginInterruption();
+		}
+	);
 
+	the_window.addEventListener('focus', 
+		function(e)
+		{
+			Ti.API.info("in the_window focus");
+			ALmixer.EndInterruption();
+		}
+	);
 
 	the_window.add(gameView);
 	return the_window;
