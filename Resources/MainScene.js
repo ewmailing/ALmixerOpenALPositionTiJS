@@ -61,7 +61,7 @@ function ShowParticle(particle_effect, x, y)
 //			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
 
 			audioListener.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-			audioListener.color(1.0, 1.0, 1.0);
+			audioListener.color(1.0, 0.0, 0.0);
 			if(currentListenerTrailParticle !== null)
 			{
 				currentListenerTrailParticle.x = audioListener.center.x;
@@ -75,7 +75,7 @@ function ShowParticle(particle_effect, x, y)
 //			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
 
 			audioListener.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-			audioListener.color(1.0, 0.0, 0.0);
+			audioListener.color(1.0, 1.0, 1.0);
 			if(currentListenerTrailParticle !== null)
 			{
 				currentListenerTrailParticle.x = audioListener.center.x;
@@ -240,7 +240,7 @@ function ShowParticle(particle_effect, x, y)
 				x:100,
 				y:200
 			});
-			audioListener.color(1.0, 0, 0);
+			audioListener.color(1.0, 1.0, 1.0);
 			audioListener.name = 'audioListener';
 
 			// Initialize all the particles by adding them to the scene, but then hiding them.
