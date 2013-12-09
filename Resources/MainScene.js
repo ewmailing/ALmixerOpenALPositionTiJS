@@ -367,7 +367,7 @@ function ShowParticle(particle_effect, x, y)
 			value:0.0,
 			width:'80%',
 			height:'auto',
-			top:280,
+			bottom:0,
 			text:"Listener Velocity"
 			//   leftTrackImage:'../images/slider_orangebar.png',
 			//   rightTrackImage:'../images/slider_lightbar.png',
