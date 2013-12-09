@@ -31,6 +31,7 @@ function ShowParticle(particle_effect, x, y)
 		var touchableObjectsArray = [];
 		var currentlyTouchedObjectsList = {};
 		var audioSource = null;
+		var audioSourceParticles = null;
 		var audioListener = null;
 		var sourceTrailParticles = [];
 		var currentSourceTrailParticle = null;
@@ -91,7 +92,9 @@ function ShowParticle(particle_effect, x, y)
 			 //   Ti.API.info(e.type + ": " + JSON.stringify(e.points));
 
 			audioSource.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-//						audioListener.color(1.0, 0, 1.0);
+//						audioSource.color(1.0, 0, 1.0);
+			audioSourceParticles.center = audioSource.center;
+
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -105,7 +108,9 @@ function ShowParticle(particle_effect, x, y)
 			//			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
 
 			audioSource.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-//						audioListener.color(1.0, 1.0, 1.0);
+			audioSourceParticles.center = audioSource.center;
+//						audioSource.color(0.0, 0.0, 1.0);
+
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -119,7 +124,9 @@ function ShowParticle(particle_effect, x, y)
 			//			    Ti.API.info(e.type + ": " + JSON.stringify(e.points));
 
 			audioSource.center = {x: e.x * TOUCH_SCALE, y:e.y * TOUCH_SCALE};
-//						audioListener.color(1.0, 0.0, 0.0);
+			audioSourceParticles.center = audioSource.center;
+
+//						audioSource.color(1.0, 1.0, 1.0);
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -208,8 +215,22 @@ function ShowParticle(particle_effect, x, y)
 			Ti.API.info("MainScene has been activated.");
 			
 			// use createSprite for debugging because it creates a simple square
-//			audioSource = platino.createSprite(
-			audioSource = platino.createParticles(
+			// We create an invisible sprite to represent the hit area to handle touches.
+			// This is because our particle effect of bubbles has a very small hit area.
+			audioSource = platino.createSprite(
+            {
+				width:120,
+				height:120,
+				x:100,
+				y:100
+			});
+			audioSource.color(0, 0, 0, 0); // make invisible
+			audioSource.name = 'audioSource';
+			// audioSource.z = -10;
+
+			// To be kind of slick, we will use a particle effect to draw the bubbles.
+			// This particle effect will move with our invisible sprite which acts as the proxy for touches.
+			audioSourceParticles = platino.createParticles(
             {
 				image:'BubbleSource.lap',
 //				width:48,
@@ -217,10 +238,8 @@ function ShowParticle(particle_effect, x, y)
 				x:100,
 				y:100
 			});
-			audioSource.color(0, 0, 1.0);
-			audioSource.name = 'audioSource';
-			
-			
+			audioSourceParticles.name = 'audioSourceParticles';
+
 			sourceTrailParticles[0] = platino.createParticles({image:'SourceTrail_100.lap'});
 			sourceTrailParticles[1] = platino.createParticles({image:'SourceTrail_200.lap'});
 			sourceTrailParticles[2] = platino.createParticles({image:'SourceTrail_300.lap'});
@@ -262,6 +281,7 @@ function ShowParticle(particle_effect, x, y)
 
 			scene.add(audioListener);
 			scene.add(audioSource);
+			scene.add(audioSourceParticles);
 
 
 
