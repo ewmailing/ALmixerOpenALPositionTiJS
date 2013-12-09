@@ -3,6 +3,26 @@ var ALmixer = platino.require('co.lanica.almixer');
 
 var TOUCH_SCALE = 1;
 
+// I made this a helper function because it wasn't obvious what the best way to hide a particle was.
+// scene.remove() on the particle works, but the instantaneous disappearance of the existing particles was unpleasant to look at.
+// This could be solved with a delayed timer callback to remove the particles after the next gets going for a little bit, 
+// but I didn't feel like adding more indirection for what is supposed to be a simple audio example.
+// I also tried pause(), stop(), resume(), and restart(), but it didn't work the way I wanted.
+// I didn't see any difference between pause() and stop() so particles would freeze on screen, which included the inability to move them once frozen.
+// I also tried setting .alpha to 0, but it didn't seem to do anything.
+// So my solution is kind of silly but effective; I just move the particles to some place offscreen.
+// In theory, I'm wasting some CPU and the timer callback technique would be better, but for this simple example, 
+// the performance shouldn't make a difference.
+function HideParticle(particle_effect, scene)
+{
+    particle_effect.move(-10000, -10000);
+}
+
+// This is the counterpart function for HideParticle.
+function ShowParticle(particle_effect, x, y)
+{
+    particle_effect.move(x, y);
+}
 
 (function() {
 
@@ -198,7 +218,7 @@ var TOUCH_SCALE = 1;
 		var onSceneActivated = function(e)
 		{
 			// ---- create sprites, add listeners, etc. ----
-var current_particle_index = 0;
+			var current_particle_index = 0;
 			Ti.API.info("MainScene has been activated.");
 			
 			audioSource = platino.createSprite(
@@ -237,20 +257,17 @@ var current_particle_index = 0;
 			audioListener.color(1.0, 0, 0);
 			audioListener.name = 'audioListener';
 
-//			scene.add(source_trail);
-
+			// Initialize all the particles by adding them to the scene, but then hiding them.
 			for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 			{
 				scene.add(sourceTrailParticles[current_particle_index]);
-				sourceTrailParticles[current_particle_index].hide();
-//				sourceTrailParticles[current_particle_index].alpha = 0;
+				HideParticle(sourceTrailParticles[current_particle_index]);
 			}
 			for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 			{
 				listenerTrailParticles[current_particle_index].angle = 180.0;
 				scene.add(listenerTrailParticles[current_particle_index]);
-				listenerTrailParticles[current_particle_index].hide();
-//				sourceTrailParticles[current_particle_index].alpha = 0;
+				HideParticle(listenerTrailParticles[current_particle_index]);
 			}
 
 			scene.add(audioListener);
@@ -319,8 +336,6 @@ var current_particle_index = 0;
 		scene.addEventListener('activated', onSceneActivated);
 		scene.addEventListener('deactivated', onSceneDeactivated);
 		
-		
-		
 			
 		var source_velocity_slider = Titanium.UI.createSlider({
 			min:0,
@@ -330,13 +345,9 @@ var current_particle_index = 0;
 			height:'auto',
 			top:0,
 			text:"Source Velocity"
-			//   leftTrackImage:'../images/slider_orangebar.png',
-			//   rightTrackImage:'../images/slider_lightbar.png',
-			//   thumbImage:'../images/slider_thumb.png'
 		});
 		source_velocity_slider.addEventListener('change',function(e)
 		{
-			//	ALmixer.SetMasterVolume(e.value);
 			var which_particle = null;
 			var current_particle_index = 0;
 			if(e.value <= 1.0/10.0)
@@ -371,31 +382,22 @@ var current_particle_index = 0;
 
 			if(which_particle !== currentSourceTrailParticle)
 			{
-				currentSourceTrailParticle = which_particle;
-
+	    		// Loop through all our particles and hide all of them except for the one that needs to be shown.
+		    	// Also update the position of the shown particle.
 				for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 				{
 					if(which_particle === sourceTrailParticles[current_particle_index])
 					{
-						//				        sourceTrailParticles[current_particle_index].alpha = 1.0;
-						sourceTrailParticles[current_particle_index].show();
+						ShowParticle(sourceTrailParticles[current_particle_index], audioSource.center.x, audioSource.center.y);
 					}
 					else
 					{
-	//				        sourceTrailParticles[current_particle_index].alpha = 0.0;
-						sourceTrailParticles[current_particle_index].hide();
+						HideParticle(sourceTrailParticles[current_particle_index]);
 					}
-					// sourceTrailParticles[current_particle_index].hide();
 				}
-					
 
-				if(which_particle !== null)
-				{
-					// need to make sure source sprite is drawn on top of particles
-					currentSourceTrailParticle.x = audioSource.center.x;
-					currentSourceTrailParticle.y = audioSource.center.y;
-					//    which_particle.show();
-				}
+			    // Save the selected particle as the one we are now showing.
+				currentSourceTrailParticle = which_particle;
 			}
 
 			// slider ranges are 0 to 1. We want to scale up the values so we can actually hear a difference 
@@ -421,9 +423,10 @@ var current_particle_index = 0;
 		});
 		listener_velocity_slider.addEventListener('change',function(e)
 		{
-			//	ALmixer.SetMasterVolume(e.value);
 			var which_particle = null;
 			var current_particle_index = 0;
+			// Based on the range of the slider, pick a different particle effect for looks
+			// since we only have a finite set of precanned particles I made.
 			if(e.value <= 1.0/10.0)
 			{
 				// don't show the emitter
@@ -456,31 +459,23 @@ var current_particle_index = 0;
 
 			if(which_particle !== currentListenerTrailParticle)
 			{
-				currentListenerTrailParticle = which_particle;
-
+	    		// Loop through all our particles and hide all of them except for the one that needs to be shown.
+		    	// Also update the position of the shown particle.
 				for(current_particle_index=0; current_particle_index<5; current_particle_index++)
 				{
 					if(which_particle === listenerTrailParticles[current_particle_index])
 					{
-						//				        listenerTrailParticles[current_particle_index].alpha = 1.0;
-						listenerTrailParticles[current_particle_index].show();
+						ShowParticle(listenerTrailParticles[current_particle_index], audioListener.center.x, audioListener.center.y);
 					}
 					else
 					{
-	//				        listenerTrailParticles[current_particle_index].alpha = 0.0;
-						listenerTrailParticles[current_particle_index].hide();
-					}
-					// listenerTrailParticles[current_particle_index].hide();
-				}
-					
+						HideParticle(listenerTrailParticles[current_particle_index]);
 
-				if(which_particle !== null)
-				{
-					// need to make sure listener sprite is drawn on top of particles
-					currentListenerTrailParticle.x = audioListener.center.x;
-					currentListenerTrailParticle.y = audioListener.center.y;
-					//    which_particle.show();
+					}
 				}
+				
+			    // Save the selected particle as the one we are now showing.
+				currentListenerTrailParticle = which_particle;
 			}
 
 			// slider ranges are 0 to 1. We want to scale up the values so we can actually hear a difference 
