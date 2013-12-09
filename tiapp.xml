@@ -54,6 +54,8 @@
     <modules>
         <module platform="android">co.lanica.platino</module>
         <module platform="iphone">co.lanica.platino</module>
+        <module platform="android">co.lanica.almixer</module>
+        <module platform="iphone">co.lanica.almixer</module>
     </modules>
     <deployment-targets>
         <target device="tizen">false</target>

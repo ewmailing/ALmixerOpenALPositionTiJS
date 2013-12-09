@@ -1,4 +1,5 @@
-
+var platino = require('co.lanica.platino');
+var ALmixer = platino.require('co.lanica.almixer');
 
 
 
@@ -25,7 +26,7 @@ function ShowParticle(particle_effect, x, y)
 }
 
 (function() {
-	var platino = require('co.lanica.platino');
+
 
 	var MainScene = function(window, game) {
 		var scene = platino.createScene();
@@ -40,7 +41,27 @@ function ShowParticle(particle_effect, x, y)
 		var listenerTrailParticles = [];
 		var currentListenerTrailParticle = null;
 
+		var soundEffectHandle = ALmixer.LoadAll("sound_bubbles.wav");
+		// Since this app uses OpenAL effects which need OpenAL source ids, let's grab a free channel and hold on/reuse its source.
+		// Since we have nothing else playing, we know all channels are free. So let's use channel 0.
+		// If we did not know this, we could use ALmixer.FindFreeChannel() first to get a free channel.
+		// If we had more sounds, playing, we might also want to use ALmixer.ReserveChannels() to prevent auto-assignment from trying to use our channel.
+		var alSourceID = ALmixer.GetSource(0);
 
+		// I like linear distance models for 2D games.
+		// Options are AL_NONE, AL_INVERSE_DISTANCE, AL_INVERSE_DISTANCE_CLAMPED
+		// AL_LINEAR_DISTANCE, AL_LINEAR_DISTANCE_CLAMPED
+		// AL_EXPONENT_DISTANCE, AL_EXPONENT_DISTANCE_CLAMPED 
+		ALmixer.alDistanceModel(ALmixer.AL_LINEAR_DISTANCE_CLAMPED);
+		// Turn on Doppler effects
+		ALmixer.alDopplerFactor(1.0);
+		// Default speed of sound in OpenAL is 343.3 (which is speed of sound in air)
+		ALmixer.alSpeedOfSound(343.3);
+
+		// We want to set the scale/range of how sound will get quieter as things get farther apart.
+		// In ApplicationWindow.js, we implied we were working in a game virtual space of 1024x768.
+		// So let's set the max drop off distance at 700.
+		ALmixer.alSourcef(alSourceID, ALmixer.AL_MAX_DISTANCE, 700);
 
 		var onSpriteTouch = function(e)
 		{
@@ -62,6 +83,8 @@ function ShowParticle(particle_effect, x, y)
 				currentListenerTrailParticle.x = audioListener.center.x;
 				currentListenerTrailParticle.y = audioListener.center.y;
 			}
+			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, audioListener.center.y, 0);
+				
 		};
 		
 		var onAudioListenerTouchEnd = function(e)
@@ -73,6 +96,7 @@ function ShowParticle(particle_effect, x, y)
 				currentListenerTrailParticle.x = audioListener.center.x;
 				currentListenerTrailParticle.y = audioListener.center.y;
 			}
+			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, audioListener.center.y, 0);
 
 		};
 		
@@ -99,6 +123,8 @@ function ShowParticle(particle_effect, x, y)
 				currentSourceTrailParticle.x = audioSource.center.x;
 				currentSourceTrailParticle.y = audioSource.center.y;
 			}
+			ALmixer.alSource3f(alSourceID, ALmixer.AL_POSITION, audioSource.center.x, audioSource.center.y, 0);
+			
 		};
 
 		var onAudioSourceTouchEnd = function(e)
@@ -111,6 +137,7 @@ function ShowParticle(particle_effect, x, y)
 				currentSourceTrailParticle.x = audioSource.center.x;
 				currentSourceTrailParticle.y = audioSource.center.y;
 			}
+			ALmixer.alSource3f(alSourceID, ALmixer.AL_POSITION, audioSource.center.x, audioSource.center.y, 0);			
 		};
 
 		var onScreenTouchStart = function(event)
@@ -272,6 +299,8 @@ function ShowParticle(particle_effect, x, y)
 			game.addEventListener('touchstart', onScreenTouchStart);
 			game.addEventListener('touchmove', onScreenTouchMove);
 			game.addEventListener('touchend', onScreenTouchEnd);
+
+			ALmixer.PlaySource(alSourceID, soundEffectHandle, -1);
 		};
 
 		var onSceneDeactivated = function(e)
@@ -378,6 +407,13 @@ function ShowParticle(particle_effect, x, y)
                 // Save the selected particle as the one we are now showing.
 				currentSourceTrailParticle = which_particle;
 			}
+
+			// slider ranges are 0 to 1. We want to scale up the values so we can actually hear a difference 
+			// since OpenAL speed of sound is 343.3 m/s.
+			var source_velocity = e.value * 100;
+			ALmixer.alSource3f(alSourceID, ALmixer.AL_VELOCITY, source_velocity, 0, 0);
+
+
 		});
 		window.add(source_velocity_slider);
 
@@ -449,6 +485,13 @@ function ShowParticle(particle_effect, x, y)
                 // Save the selected particle as the one we are now showing.
 				currentListenerTrailParticle = which_particle;
 			}
+
+			// slider ranges are 0 to 1. We want to scale up the values so we can actually hear a difference 
+			// since OpenAL speed of sound is 343.3 m/s.
+			// Make negative because the listener flys to the left (negative direction)
+			var listener_velocity = e.value * -100;
+			ALmixer.alListener3f(ALmixer.AL_VELOCITY, listener_velocity, 0, 0);
+
 		});
 		window.add(listener_velocity_slider);
 
