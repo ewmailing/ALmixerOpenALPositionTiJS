@@ -250,6 +250,9 @@ function ShowParticle(particle_effect, x, y)
 				HideParticle(listenerTrailParticles[current_particle_index]);
 			}
 
+			// Make sure bubble particles are in the same position as the proxy sprite.
+			audioSourceParticles.center = audioSource.center;
+			
 			scene.add(audioListener);
 			scene.add(audioSource);
 			scene.add(audioSourceParticles);
