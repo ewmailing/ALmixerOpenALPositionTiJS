@@ -299,7 +299,7 @@ function ShowParticle(particle_effect, x, y)
 			// (Not that we will be able to hear the difference in this example since nobody has speakers above and below their heads.)
 			// In ApplicationWindow.js, we implied we were working in a game virtual space of 1024x768, where our height is 768.
 			ALmixer.alSource3f(alSourceID, ALmixer.AL_POSITION, audioSource.center.x, game.TARGET_SCREEN.height - audioSource.center.y, 0);
-			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, game.TARGET_SCREEN.height - audioSource.center.y, 0);
+			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, game.TARGET_SCREEN.height - audioListener.center.y, 0);
 			
 			scene.add(audioListener);
 			scene.add(audioSource);
