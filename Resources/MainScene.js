@@ -301,6 +301,9 @@ function ShowParticle(particle_effect, x, y)
 			ALmixer.alSource3f(alSourceID, ALmixer.AL_POSITION, audioSource.center.x, game.TARGET_SCREEN.height - audioSource.center.y, 0);
 			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, game.TARGET_SCREEN.height - audioListener.center.y, 0);
 			
+			// Make sure bubble particles are in the same position as the proxy sprite.
+			audioSourceParticles.center = audioSource.center;
+			
 			scene.add(audioListener);
 			scene.add(audioSource);
 			scene.add(audioSourceParticles);
