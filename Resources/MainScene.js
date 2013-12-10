@@ -34,14 +34,15 @@ function ShowParticle(particle_effect, x, y)
 		var touchableObjectsArray = [];
 		var currentlyTouchedObjectsList = {};
 		var audioSource = null;
-		var audioSourceParticles = null;
 		var audioListener = null;
 		var sourceTrailParticles = [];
 		var currentSourceTrailParticle = null;
 		var listenerTrailParticles = [];
 		var currentListenerTrailParticle = null;
 
-		var soundEffectHandle = ALmixer.LoadAll("sound_bubbles.wav");
+		// Yes! It's the Nyanyanyanyanyanyanya (Nyan Cat Song) from https://www.youtube.com/watch?v=QH2-TGUlwu4
+		// and http://momolabo.lolipop.jp/nyancatsong/Nyan/Nyanyanyanyanyanyanya%21.html
+		var soundEffectHandle = ALmixer.LoadAll("NyaNyaLoopMono.wav");
 		// Since this app uses OpenAL effects which need OpenAL source ids, let's grab a free channel and hold on/reuse its source.
 		// Since we have nothing else playing, we know all channels are free. So let's use channel 0.
 		// If we did not know this, we could use ALmixer.FindFreeChannel() first to get a free channel.
@@ -54,7 +55,7 @@ function ShowParticle(particle_effect, x, y)
 		// AL_EXPONENT_DISTANCE, AL_EXPONENT_DISTANCE_CLAMPED 
 		ALmixer.alDistanceModel(ALmixer.AL_LINEAR_DISTANCE_CLAMPED);
 		// Turn on Doppler effects
-		ALmixer.alDopplerFactor(1.0);
+		ALmixer.alDopplerFactor(0.3);
 		// Default speed of sound in OpenAL is 343.3 (which is speed of sound in air)
 		ALmixer.alSpeedOfSound(343.3);
 
@@ -112,8 +113,6 @@ function ShowParticle(particle_effect, x, y)
 		var onAudioSourceTouchStart = function(e)
 		{
 			audioSource.center = {x:e.x, y:e.y};
-//			audioListener.color(1.0, 0, 1.0);
-			audioSourceParticles.center = audioSource.center;
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -124,8 +123,6 @@ function ShowParticle(particle_effect, x, y)
 		var onAudioSourceTouchMove = function(e)
 		{
 			audioSource.center = {x:e.x, y:e.y};
-//			audioListener.color(1.0, 1.0, 1.0);
-			audioSourceParticles.center = audioSource.center;
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -142,8 +139,6 @@ function ShowParticle(particle_effect, x, y)
 		var onAudioSourceTouchEnd = function(e)
 		{
 			audioSource.center = {x:e.x, y:e.y};
-//			audioListener.color(1.0, 0.0, 0.0);
-			audioSourceParticles.center = audioSource.center;
 			if(currentSourceTrailParticle !== null)
 			{
 				currentSourceTrailParticle.x = audioSource.center.x;
@@ -226,38 +221,22 @@ function ShowParticle(particle_effect, x, y)
 			var current_particle_index = 0;
 			Ti.API.info("MainScene has been activated.");
 			
-			// use createSprite for debugging because it creates a simple square
-			// We create an invisible sprite to represent the hit area to handle touches.
-			// This is because our particle effect of bubbles has a very small hit area.
-			audioSource = platino.createSprite(
+			// Yes! It's the adorable Nyan Cat from https://www.youtube.com/watch?v=QH2-TGUlwu4
+			// and http://nyan.cat/
+			audioSource = platino.createSpriteSheet(
             {
-				width:120,
-				height:120,
 				x:100,
-				y:100
+				y:100,
+				image:'NyanCat_NyanCat.xml'
 			});
             game.setupSpriteSize(audioSource);
-			audioSource.color(0, 0, 0, 0); // make invisible
 			audioSource.name = 'audioSource';
-			// audioSource.z = -10;
 
-			// To be kind of slick, we will use a particle effect to draw the bubbles.
-			// This particle effect will move with our invisible sprite which acts as the proxy for touches.
-			audioSourceParticles = platino.createParticles(
-            {
-				image:'BubbleSource.lap',
-//				width:48,
-//				height:48,
-				x:100,
-				y:100
-			});
-			audioSourceParticles.name = 'audioSourceParticles';
-
-			sourceTrailParticles[0] = platino.createParticles({image:'SourceTrail_100.lap'});
-			sourceTrailParticles[1] = platino.createParticles({image:'SourceTrail_200.lap'});
-			sourceTrailParticles[2] = platino.createParticles({image:'SourceTrail_300.lap'});
-			sourceTrailParticles[3] = platino.createParticles({image:'SourceTrail_400.lap'});
-			sourceTrailParticles[4] = platino.createParticles({image:'SourceTrail_500.lap'});
+			sourceTrailParticles[0] = platino.createParticles({image:'RainbowTrail_100.lap'});
+			sourceTrailParticles[1] = platino.createParticles({image:'RainbowTrail_200.lap'});
+			sourceTrailParticles[2] = platino.createParticles({image:'RainbowTrail_300.lap'});
+			sourceTrailParticles[3] = platino.createParticles({image:'RainbowTrail_400.lap'});
+			sourceTrailParticles[4] = platino.createParticles({image:'RainbowTrail_500.lap'});
 			currentSourceTrailParticle = null; // don't show anything at 0 velocity
 
 			listenerTrailParticles[0] = platino.createParticles({image:'ListenerTrail_100.lap'});
@@ -271,10 +250,10 @@ function ShowParticle(particle_effect, x, y)
 			audioListener = platino.createSprite(
             {
 				image:'Machovka_head_set.png',
-				width:64,
-				height:64,
-				x:100,
-				y:200
+				width:100,
+				height:100,
+				x:400,
+				y:400
 			});
             game.setupSpriteSize(audioListener);
 
@@ -301,13 +280,10 @@ function ShowParticle(particle_effect, x, y)
 			ALmixer.alSource3f(alSourceID, ALmixer.AL_POSITION, audioSource.center.x, game.TARGET_SCREEN.height - audioSource.center.y, 0);
 			ALmixer.alListener3f(ALmixer.AL_POSITION, audioListener.center.x, game.TARGET_SCREEN.height - audioListener.center.y, 0);
 			
-			// Make sure bubble particles are in the same position as the proxy sprite.
-			audioSourceParticles.center = audioSource.center;
 			
 			scene.add(audioListener);
 			scene.add(audioSource);
-			scene.add(audioSourceParticles);
-
+			audioSource.animate(1, 6, 1000, -1);
 
 
 			// add touch events to sprites
@@ -381,8 +357,13 @@ function ShowParticle(particle_effect, x, y)
 			top:0,
 			text:"Source Velocity"
 		});
-		source_velocity_slider.addEventListener('change',function(e)
+		source_velocity_slider.addEventListener('change', function(e)
 		{
+			// Avoids app initialization problem where this function is called before the audioSource is creates.
+			if(!audioSource)
+			{
+				return;
+			}
 			var which_particle = null;
 			var current_particle_index = 0;
 			if(e.value <= 1.0/10.0)
@@ -440,6 +421,22 @@ function ShowParticle(particle_effect, x, y)
 			var source_velocity = e.value * 100;
 			ALmixer.alSource3f(alSourceID, ALmixer.AL_VELOCITY, source_velocity, 0, 0);
 
+			// Let's make Pop Tart cat animate faster or slower based on the velocity.
+			// animate takes the number of milliseconds between frames, so larger numbers mean animate slower.
+			// This might seem a little confusing if you are used to thinking larger numbers mean faster.
+			// But the math equation still works for the following if the "larger" (slower) number is the "min" and the smaller number is the "max".
+			// Let's say 250 is the slowest at 0.0 (min)
+			// 1 is the fastest at 1.0 (max)
+			// normalized_value = (raw_value - min) / (max-min)
+			// Our slider is the normalized value because it always returns 0 to 1.
+			// So we want to solve for the raw_value.
+			// raw_value = normalized_value * (max-min) + min
+			var max_range_fastest = 1;
+			var min_range_slowest = 250;
+			var raw_value = e.value * (max_range_fastest - min_range_slowest) + min_range_slowest;
+//			Ti.API.info('raw_value: ' + raw_value);
+			audioSource.animate(1, 6, raw_value, -1);
+			
 
 		});
 		window.add(source_velocity_slider);
