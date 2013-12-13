@@ -6,21 +6,22 @@
 
     var CreateApplicationWindowFunction = require('ApplicationWindow');
     var app_window = new CreateApplicationWindowFunction();
-	app_window.open({fullscreen:true, navBarHidden:true, exitOnClose:true});
 
 	
-/* It is recommended that you setup the remaining event listeners for the window after 
- * it is opened on Android, so wait for it to open via event listener,
- * otherwise window.getActivity returns null.
- * Also note that the window MUST be a heavyweight window (e.g. using fullscreen or navbar settings)
- * otherwise, there will be no event listener callbacks. (Lightweight windows are gone as of Ti 3.2.0.GA)
- */
-app_window.addEventListener('open', 
-	function()
-	{
-		SetupApplicationLifeCycleHandlers(app_window);
-	}
-);
+	/* It is recommended that you setup the remaining event listeners for the window after 
+ 	 * it is opened on Android, so wait for it to open via event listener,
+ 	 * otherwise window.getActivity may return null on Android or the wrong activity.
+	 * (But remember to setup the this 'open' event listener before calling open() or you might miss the event, especially on iOS.)
+	 * Also note that the window MUST be a heavyweight window (e.g. using fullscreen or navbar settings)
+	 * otherwise, there will be no event listener callbacks. (Lightweight windows are gone as of Ti 3.2.0.GA)
+	 */
+	app_window.addEventListener('open', 
+		function()
+		{
+			SetupApplicationLifeCycleHandlers(app_window);
+		}
+	);
+	app_window.open({fullscreen:true, navBarHidden:true, exitOnClose:true});
 
 
 /* You should copy all the event handlers below into your app. 
