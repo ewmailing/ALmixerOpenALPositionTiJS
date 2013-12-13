@@ -200,7 +200,6 @@ function CreateApplicationWindow()
 	//		gameView.currentScene.backButtonHandler();
 	//	}
 		the_window.close();
-		ALmixer.Quit();
 	});
 
 	// Free up game resources when the_window is closed
@@ -208,8 +207,8 @@ function CreateApplicationWindow()
 		gameView = null;
 	});
 */
-	// The Titanium.Android.currentActivity.addEventListener pause, resume don't work.
-	// As a fallback, we'll use the window focus to pause/resume audio when the application is backgrounded.
+	// Instead of using the activity, as an alternative, you can also use focus/blur to pause/resume.
+	/*
 	the_window.addEventListener('blur', 
 		function(e) 
 		{
@@ -225,7 +224,7 @@ function CreateApplicationWindow()
 			ALmixer.EndInterruption();
 		}
 	);
-
+*/
 	the_window.add(gameView);
 	return the_window;
 }
