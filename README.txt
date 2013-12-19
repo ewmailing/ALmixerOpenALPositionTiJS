@@ -4,6 +4,8 @@ It demonstrates the use of position on the noise maker (OpenAL source) depicted 
 You may touch and drag both around to hear how the sound shifts between the left and right speakers depending where the bubbles are relative to the listener.
 (For best results, use headphones to hear the stereo separation.)
 
+Distance attenuation is also demonstrated. Notice how the volume increases and decreases as you move the objects closer and farther away from each other.
+
 
 It also demonstrates the use of velocity and the Doppler effect. 
 When sound travels towards the listener, the sound plays at a higher pitch. 
